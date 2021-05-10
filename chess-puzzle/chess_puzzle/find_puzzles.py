@@ -46,7 +46,10 @@ def generate_random_position():
                 end_game = True
                 break
         if not end_game:
-            yield board.fen()
+            stockfish.set_fen_position(board.fen())
+            position_evaluation = stockfish.get_evaluation()
+            if position_evaluation['type']=='cp' and abs(position_evaluation["value"]) < int(sys.argv[1])*0.6: # threshold
+                yield board.fen()
 
 
 if __name__ == "__main__":
@@ -55,13 +58,13 @@ if __name__ == "__main__":
     store_high_deltas = list()
 
     for initial_position in generate_random_position():
-        initial, final, moves = evaluation_delta(initial_position, int(sys.argv[1]), int(sys.argv[2]))
+        initial, final, moves = evaluation_delta(initial_position, int(sys.argv[2]), int(sys.argv[3]))
         initial_position, initial_evaluation = initial
         final_position, final_evaluation = final
 
         if initial_evaluation['type']=="cp" and final_evaluation['type']=="cp":
-            print(f"Absolute delta: {abs(final_evaluation['value']-initial_evaluation['value'])}")
-            if abs(final_evaluation['value']-initial_evaluation['value']) > 400 and (final_evaluation['value'] * initial_evaluation['value']) < 0:
+            print(f"Initial eval = {initial_evaluation['value']}, final eval = {final_evaluation['value']}, delta {final_evaluation['value']-initial_evaluation['value']}")
+            if abs(final_evaluation['value']-initial_evaluation['value']) > int(sys.argv[1]) and (final_evaluation['value'] * initial_evaluation['value']) < 0:
                 store_high_deltas.append((initial, final))
                 print(f"#### INITIAL POSITION: eval = {initial_evaluation['value']}, fen = {initial_position}")
                 stockfish.set_fen_position(initial_position)
