@@ -54,17 +54,17 @@ if __name__ == "__main__":
     store_high_deltas = list()
 
     for initial_position in generate_random_position():
-        initial, final = evaluation_delta(initial_position, 10)
+        initial, final = evaluation_delta(initial_position, 7)
         initial_position, initial_evaluation = initial
         final_position, final_evaluation = final
 
         print(f"Absolute delta: {abs(final_evaluation-initial_evaluation)}")
         if abs(final_evaluation-initial_evaluation) > 600 and (final_evaluation * initial_evaluation) < 0:
             store_high_deltas.append((initial, final))
-            print(f"#### INITIAL POSITION: eval = {initial_evaluation}")
+            print(f"#### INITIAL POSITION: eval = {initial_evaluation}, fen = {initial_position}")
             stockfish.set_fen_position(initial_position)
             print(stockfish.get_board_visual())
-            print(f"#### FINAL POSITION: eval = {final_evaluation}")
+            print(f"#### FINAL POSITION: eval = {final_evaluation}, fen = {final_position}")
             stockfish.set_fen_position(final_position)
             print(stockfish.get_board_visual())
 
