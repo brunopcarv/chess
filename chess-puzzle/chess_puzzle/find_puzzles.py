@@ -23,6 +23,8 @@ def evaluation_delta(initial_position: str, depth: int):
         best_move = stockfish.get_best_move()
         board.push(chess.Move.from_uci(best_move))
         stockfish.set_fen_position(board.fen())
+        if board.is_game_over():
+            break
     
     final_position = board.fen()
     final_evaluation = stockfish.get_evaluation()['value']
@@ -54,7 +56,7 @@ if __name__ == "__main__":
     store_high_deltas = list()
 
     for initial_position in generate_random_position():
-        initial, final = evaluation_delta(initial_position, 7)
+        initial, final = evaluation_delta(initial_position, 15)
         initial_position, initial_evaluation = initial
         final_position, final_evaluation = final
 
